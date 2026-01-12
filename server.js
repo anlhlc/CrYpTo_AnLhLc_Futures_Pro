@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const app = express();
 const session = require('express-session');
 app.set('trust proxy', 1);
 const bcrypt = require('bcryptjs');
@@ -7,7 +8,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 
-const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 // Güvenlik middleware'leri
