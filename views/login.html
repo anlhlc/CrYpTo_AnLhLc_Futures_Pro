@@ -311,7 +311,7 @@
 
                     // Redirect after short delay
                     setTimeout(() => {
-                        window.location.replace = data.redirect || '/';
+                        window.location.replace(data.redirect || '/');
                     }, 1000);
                 } else {
                     showError(data.error || 'Giriş başarısız. Lütfen tekrar deneyin.');
