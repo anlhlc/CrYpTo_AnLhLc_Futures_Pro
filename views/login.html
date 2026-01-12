@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş - Binance Futures Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e6edf3;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #21262d;
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(240, 246, 252, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #c9d1d9;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            background: #0d1117;
+            color: #e6edf3;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f0b90b;
+            box-shadow: 0 0 0 3px rgba(240, 185, 11, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #6e7681;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f0b90b 0%, #d4a106 100%);
+            color: #0d1117;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f5c518 0%, #e6b108 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+            color: #f85149;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #30363d;
+        }
+
+        .footer p {
+            color: #6e7681;
+            font-size: 12px;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(46, 160, 67, 0.1);
+            border: 1px solid rgba(46, 160, 67, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: #3fb950;
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #30363d;
+            border-top-color: #f0b90b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-overlay {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-overlay.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .success-overlay h2 {
+            color: #3fb950;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-icon">📊</div>
+                <h1>Binance Futures</h1>
+                <p>Güvenli Dashboard Erişimi</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <div id="loginForm">
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="username">Kullanıcı Adı</label>
+                        <input type="text"
+                               id="username"
+                               name="username"
+                               placeholder="Kullanıcı adınızı girin"
+                               autocomplete="username"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="Şifrenizi girin"
+                               autocomplete="current-password"
+                               required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Giriş Yap
+                    </button>
+                </form>
+            </div>
+
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Giriş yapılıyor...</p>
+            </div>
+
+            <div id="success" class="success-overlay">
+                <div class="success-icon">✅</div>
+                <h2>Giriş Başarılı!</h2>
+                <p>Yönlendiriliyorsunuz...</p>
+            </div>
+
+            <div class="footer">
+                <div class="security-badge">
+                    🔒 256-bit SSL Şifreleme
+                </div>
+                <p style="margin-top: 16px;">
+                    Tüm hakları saklıdır © 2024
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginFormElement');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const success = document.getElementById('success');
+        const loginSection = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Basic validation
+            if (!username || !password) {
+                showError('Lütfen tüm alanları doldurun.');
+                return;
+            }
+
+            // Show loading
+            loginSection.style.display = 'none';
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    loading.classList.remove('show');
+                    success.classList.add('show');
+
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/';
+                    }, 1000);
+                } else {
+                    showError(data.error || 'Giriş başarısız. Lütfen tekrar deneyin.');
+                    hideLoading();
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Bir bağlantı hatası oluştu. Lütfen tekrar deneyin.');
+                hideLoading();
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            hideLoading();
+        }
+
+        function hideLoading() {
+            loading.classList.remove('show');
+            loginSection.style.display = 'block';
+            submitBtn.disabled = false;
+        }
+
+        // Enter key handling
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Clear error on input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                errorMessage.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
